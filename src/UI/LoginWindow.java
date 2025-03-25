@@ -1,12 +1,14 @@
 package UI;
 
-import ConnReg.LoginController;
+import Session.UserSession;
 import User.User;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import DAO.UserDAO;
 import java.sql.SQLException;
 
 public class LoginWindow extends JFrame {
@@ -27,7 +29,7 @@ public class LoginWindow extends JFrame {
 
         // Mise en page avec un panneau
         JPanel panel = new JPanel(new GridLayout(3, 2));
-        panel.add(new JLabel("Email :"));
+        panel.add(new JLabel("Nom :"));
         panel.add(emailField);
         panel.add(new JLabel("Mot de passe :"));
         panel.add(passwordField);
@@ -39,21 +41,13 @@ public class LoginWindow extends JFrame {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String email = emailField.getText();
+                String name = emailField.getText();
                 String password = new String(passwordField.getPassword());
-                LoginController controller = new LoginController();
-                try {
-                    User user = controller.login(email, password);
-                    if (user != null) {
-                        // Connexion réussie, ouvrir la fenêtre principale
-                        new MainWindow(user).setVisible(true);
-                        dispose(); // Ferme la fenêtre de connexion
-                    } else {
-                        JOptionPane.showMessageDialog(LoginWindow.this, "Email ou mot de passe incorrect");
-                    }
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(LoginWindow.this, "Erreur de connexion à la base de données");
+                UserDAO userDAO = new UserDAO();
+                if (userDAO.authenticate(name, password)) {
+                    JOptionPane.showMessageDialog(LoginWindow.this, "Votre mot de passe est valide");
+                    LoginWindow.this.dispose();
+                    new MainWindow();
                 }
             }
         });

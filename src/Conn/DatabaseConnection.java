@@ -1,19 +1,24 @@
+// DatabaseConnection.java
 package Conn;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DatabaseConnection {
-    private static Connection conn;
+    private static final String URL = "jdbc:mysql://localhost:3306/cybergamesArras2";
+    private static final String USER = "root";
+    private static final String PASSWORD = "";
+
     public static Connection getConnection() throws SQLException {
-        if (conn == null || conn.isClosed()) {
-            String url = "jdbc:mysql://localhost:3306/cybergamesArras2";
-            String username = "your_username";
-            String password = "your_password";
-            conn = DriverManager.getConnection(url, username, password);
-            return DriverManager.getConnection("jdbc:mysql://localhost:3306/votre_base", "user", "password");
+        return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
+
+    public static int getUserId(String username) throws SQLException {
+        String query = "SELECT id FROM users WHERE name = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? rs.getInt("id") : -1;
         }
-        return conn;
     }
 }
