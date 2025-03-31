@@ -25,7 +25,7 @@ public class TimerWindow extends JFrame {
         this.isPaused = false;
         setTitle("Décompte du Forfait");
         setSize(300, 150);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Ferme l'application entière
         setLocationRelativeTo(null);
 
         // Création du panneau principal
@@ -88,8 +88,7 @@ public class TimerWindow extends JFrame {
                         timer.cancel();
                         deactivatePackage();
                         JOptionPane.showMessageDialog(TimerWindow.this, "Temps écoulé !", "Fin", JOptionPane.INFORMATION_MESSAGE);
-                        new MainMenu(username).setVisible(true);
-                        dispose();
+                        System.exit(0); // Ferme l'application lorsque le temps est écoulé
                     }
                 }
             }
@@ -155,14 +154,15 @@ public class TimerWindow extends JFrame {
         }
     }
 
-    // Surcharge de dispose pour désactiver le forfait dans tous les cas
+    // Surcharge de dispose pour désactiver le forfait et fermer l'application
     @Override
     public void dispose() {
         if (timer != null) {
             timer.cancel(); // Arrêter le timer
         }
-        deactivatePackage(); // Désactiver le forfait systématiquement
-        System.out.println("Fenêtre TimerWindow fermée, forfait désactivé");
+        deactivatePackage(); // Désactiver le forfait
+        System.out.println("Fenêtre TimerWindow fermée, application terminée.");
         super.dispose();
+        System.exit(0); // Ferme l'application entière
     }
 }
